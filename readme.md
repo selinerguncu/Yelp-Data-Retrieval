@@ -12,6 +12,8 @@ To run this program you will need `python` and `pip` already installed. Also, yo
 
 
 ```bash
+$ export YELP_CLIENT_ID=<your-yelp-client-id>
+$ export YELP_CLIENT_SECRET=<your-yelp-client-secret>
 $ pip install web.py
 $ pip install requests
 $ mkdir ***
