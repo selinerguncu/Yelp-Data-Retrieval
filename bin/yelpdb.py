@@ -24,10 +24,12 @@ CREATE TABLE JSON (
 
 CREATE TABLE Search (
   id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-  term TEXT,
-  location TEXT,
   business_count INTEGER,
-  businessID TEXT
+  businessID TEXT UNIQUE,
+  query_latitude INTEGER,
+  query_longitude INTEGER,
+  query_category TEXT,
+  query_price TEXT
 );
 
 CREATE TABLE Business (
@@ -42,10 +44,12 @@ CREATE TABLE Business (
   rating INTEGER,
   review_count INTEGER,
   alias TEXT,
-  latitude TEXT,
-  longitude TEXT,
-  term TEXT,
-  location TEXT
+  latitude INTEGER,
+  longitude INTEGER,
+  query_latitude INTEGER,
+  query_longitude INTEGER,
+  query_category TEXT,
+  query_price TEXT
 );
 
 CREATE TABLE Reviews (
@@ -54,8 +58,6 @@ CREATE TABLE Reviews (
   content TEXT,
   time_created TEXT,
   business_id TEXT,
-  term TEXT,
-  location TEXT,
   FOREIGN KEY(business_id) REFERENCES Business(id)
 )
 
