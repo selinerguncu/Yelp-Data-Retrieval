@@ -15,7 +15,9 @@ To run this program you will need `python` and `pip` already installed. Also, yo
 $ export YELP_CLIENT_ID=<your-yelp-client-id>
 $ export YELP_CLIENT_SECRET=<your-yelp-client-secret>
 $ pip install web.py
+$ pip install geopy
 $ pip install requests
+$ pip install timestring
 $ mkdir ***
 $ python bin/***.py
 $ python bin/***.py
@@ -36,7 +38,7 @@ For Python 2.x:
     from urllib import urlencode
 ```
 
-After you've done this, your game should be running on localhost:8080.
+After you've done this, your program should be running on localhost:8080.
 
 ##### Yelp Data Visualization
 
