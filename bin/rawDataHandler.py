@@ -25,16 +25,6 @@ APP_PATH = os.getcwd()
 
 class RawDataHandler(object):
   def __init__(self, input_values):
-  # def __init__(self, term, location):
-    # parser = argparse.ArgumentParser()
-
-    # parser.add_argument('-q', '--term', dest='term', default=DEFAULT_TERM,
-    #                     type=str, help='Search term (default: %(default)s)')
-    # parser.add_argument('-l', '--location', dest='location',
-    #                     default=DEFAULT_LOCATION, type=str,
-    #                     help='Search location (default: %(default)s)')
-
-    # input_values = parser.parse_args()
     self.SEARCH_LIMIT = 50 #max is 50
     self.RADIUS = 200
 
@@ -57,6 +47,8 @@ class RawDataHandler(object):
   def getRawJSON(self):
     conn = sqlite.connect(APP_PATH + '/data/yelpdb.sqlite')
     cur = conn.cursor()
+    if self.json_contents == None:
+      return
 
     cur.execute('''INSERT INTO JSON(SearchJson, ReviewsJson)
     VALUES (?, ?)''', (self.json_contents["searchJson"], self.json_contents["reviewsJson"]))
@@ -67,13 +59,18 @@ class RawDataHandler(object):
     conn = sqlite.connect(APP_PATH + '/data/yelpdb.sqlite')
     cur = conn.cursor()
 
+    if self.json_contents == None:
+      return
+
     # convert string on the JSON db to dict with: dictionary = ast.literal_eval(string)
     searchJson = ast.literal_eval(self.json_contents["searchJson"])
 
     business_count = self.json_contents["total"]
 
+    print len(searchJson["businesses"]), business_count
+
     businessIDs = []
-    for i in range(business_count): #will be range(business_count)
+    for i in range(len(searchJson["businesses"])): #will be range(business_count)
       businessID = searchJson["businesses"][i]["id"]
       cur.execute('''INSERT OR IGNORE INTO Search(query_latitude, query_longitude, query_category, query_price,
         business_count, businessID)
@@ -89,12 +86,15 @@ class RawDataHandler(object):
     conn = sqlite.connect(APP_PATH + '/data/yelpdb.sqlite')
     cur = conn.cursor()
 
+    if self.json_contents == None:
+      return
+
     # convert string on the JSON db to dict with: dictionary = ast.literal_eval(string)
     searchJson = ast.literal_eval(self.json_contents["searchJson"])
     business_count = self.json_contents["total"]
 
     businessIDs = []
-    for i in range(business_count): #will be range(business_count)
+    for i in range(len(searchJson["businesses"])): #will be range(business_count)
       businessID = searchJson["businesses"][i]["id"]
       name = searchJson["businesses"][i]["name"]
       address = searchJson["businesses"][i]["location"]["address1"]
@@ -121,6 +121,9 @@ class RawDataHandler(object):
     conn = sqlite.connect(APP_PATH + '/data/yelpdb.sqlite')
     cur = conn.cursor()
 
+    if self.json_contents == None:
+      return
+
     cur.execute('''SELECT id FROM Business WHERE query_latitude = ? AND query_longitude = ? AND
       query_category = ? AND query_price = ?''',
       (self.latitude, self.longitude, self.category, self.price))
@@ -146,6 +149,9 @@ class RawDataHandler(object):
       print "business_id", business_id
       review_path = BUSINESS_PATH + business_id + '/reviews'
       response = yelpQuery.request(API_HOST, review_path, bearer_token, url_params)
+      if not "reviews" in response.keys():
+        print response
+        return
       reviewsPerBusiness = response["reviews"]
       for review in range(3):
         try: #take care of the error if rewiews are less than 3
